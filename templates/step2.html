@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bước 2: Nhập tên</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .form-select, .form-control {
+      font-size: 1.25rem;
+      padding: 18px 14px;
+      margin-bottom: 18px;
+      min-height: 54px;
+    }
+    .main-content h3 {
+      margin-top: 1.5rem;
+      margin-bottom: 1rem;
+    }
+  </style>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const updateOptions = (selects) => {
+        const selectedValues = Array.from(selects).map(select => select.value);
+        selects.forEach(select => {
+          Array.from(select.options).forEach(option => {
+            if (option.value && option.value !== "Khác") {
+              option.hidden = selectedValues.includes(option.value) && select.value !== option.value;
+            } else {
+              option.hidden = false;
+            }
+          });
+        });
+      };
+
+      const handleCustomInput = (select) => {
+        let input = select.nextElementSibling;
+        if (!input || input.tagName.toLowerCase() !== "input") {
+          input = document.createElement('input');
+          input.type = "text";
+          input.name = `${select.name}_custom`;
+          input.placeholder = select.name.includes("criteria") ? "Nhập tên tiêu chí khác" : "Nhập tên phương án khác";
+          input.className = "form-control mb-2";
+          input.style.display = "none";
+          select.parentNode.insertBefore(input, select.nextSibling);
+        }
+
+        select.addEventListener('change', () => {
+          if (select.value === "Khác") {
+            input.style.display = "inline-block";
+            input.required = true;
+          } else {
+            input.style.display = "none";
+            input.required = false;
+          }
+
+          const group = select.name.includes("criteria") ? criteriaSelects : alternativeSelects;
+          updateOptions(group);
+        });
+      };
+
+      const criteriaSelects = document.querySelectorAll('select[name^="criteria_name_"]');
+      const alternativeSelects = document.querySelectorAll('select[name^="alternative_name_"]');
+
+      criteriaSelects.forEach(select => handleCustomInput(select));
+      alternativeSelects.forEach(select => handleCustomInput(select));
+
+      updateOptions(criteriaSelects);
+      updateOptions(alternativeSelects);
+    });
+  </script>
+</head>
+<body>
+  <div class="sidebar">
+    <h1>AHP App</h1>
+    <a href="/" class="{% if request.path == '/' %}active{% endif %}">Bước 1: Số lượng</a>
+    <a href="/step2" class="{% if request.path == '/step2' %}active{% endif %}">Bước 2: Nhập tên</a>
+    <a href="/step3" class="{% if request.path == '/step3' %}active{% endif %}">Bước 3: Ma trận</a>
+    <a href="/step4" class="{% if request.path == '/step4' %}active{% endif %}">Bước 4: Ma trận</a>
+    <a href="/result" class="{% if request.path == '/result' %}active{% endif %}">Kết quả</a>
+    <a href="/history" class="{% if request.path == '/history' %}active{% endif %}">Xem lịch sử</a>
+  </div>
+
+  <div class="main-content">
+    <h2>Bước 2: Nhập tên tiêu chí và phương án</h2>
+    <form method="post">
+      <div>
+        <h3>Chọn tên tiêu chí</h3>
+        {% for i in range(num_criteria) %}
+        <select name="criteria_name_{{ i }}" required class="form-select mb-2">
+          <option value="" disabled selected>Chọn tiêu chí {{ i+1 }}</option>
+          <option value="Ổn định giá" {% if session.criteria_names and session.criteria_names[i] == "Ổn định giá" %}selected{% endif %}>Ổn định giá</option>
+          <option value="Tăng trưởng dài hạn" {% if session.criteria_names and session.criteria_names[i] == "Tăng trưởng dài hạn" %}selected{% endif %}>Tăng trưởng dài hạn</option>
+          <option value="Tính thanh khoản" {% if session.criteria_names and session.criteria_names[i] == "Tính thanh khoản" %}selected{% endif %}>Tính thanh khoản</option>
+          <option value="Khả năng chống lạm phát" {% if session.criteria_names and session.criteria_names[i] == "Khả năng chống lạm phát" %}selected{% endif %}>Khả năng chống lạm phát</option>
+          <option value="Rủi ro đầu tư" {% if session.criteria_names and session.criteria_names[i] == "Rủi ro đầu tư" %}selected{% endif %}>Rủi ro đầu tư</option>
+          <option value="Khác" {% if session.criteria_names and session.criteria_names[i] == "Khác" %}selected{% endif %}>Khác</option>
+        </select>
+        {% endfor %}
+      </div>
+
+      <div>
+        <h3>Chọn tên phương án</h3>
+        {% for i in range(num_alternatives) %}
+        <select name="alternative_name_{{ i }}" required class="form-select mb-2">
+          <option value="" disabled selected>Chọn phương án {{ i+1 }}</option>
+          <option value="Vàng" {% if session.alternatives and session.alternatives[i] == "Vàng" %}selected{% endif %}>Vàng</option>
+          <option value="Ngoại tệ" {% if session.alternatives and session.alternatives[i] == "Ngoại tệ" %}selected{% endif %}>Ngoại tệ</option>
+          <option value="Cổ phiếu" {% if session.alternatives and session.alternatives[i] == "Cổ phiếu" %}selected{% endif %}>Cổ phiếu</option>
+          <option value="Trái phiếu" {% if session.alternatives and session.alternatives[i] == "Trái phiếu" %}selected{% endif %}>Trái phiếu</option>
+          <option value="Khác" {% if session.alternatives and session.alternatives[i] == "Khác" %}selected{% endif %}>Khác</option>
+        </select>
+        {% endfor %}
+      </div>
+
+      <div class="button-group">
+        <button type="submit" class="button">Tiếp tục</button>
+        <a href="/step1" class="button">Quay lại</a>
+        <a href="/history" class="button">Lịch sử</a>
+      </div>
+    </form>
+  </div>
+</body>
+</html>

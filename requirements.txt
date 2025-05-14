@@ -1,0 +1,7 @@
+Flask
+pymongo
+numpy
+pandas
+openpyxl
+python-dotenv
+flask-wtf

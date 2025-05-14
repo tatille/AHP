@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bước 3: Nhập ma trận tiêu chí</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+<body>
+  <div class="sidebar">
+    <h1>AHP App</h1>
+    <a href="/">Bước 1: Số lượng</a>
+    <a href="/step2">Bước 2: Nhập tên</a>
+    <a href="/step3" class="active">Bước 3: Ma trận</a>
+    <a href="/step4">Bước 4: Ma Trận</a>
+    <a href="/result">Bước 5: Kết quả</a>
+    <a href="/history">Xem lịch sử</a>
+  </div>
+
+  <div class="main-content">
+    <h2>Bước 3: Nhập ma trận tiêu chí</h2>
+
+    {% if error %}
+<div class="error">
+  {{ error }}
+</div>
+{% endif %}
+
+    <form method="post">
+      <table>
+        <tr>
+          <th></th>
+          {% for i in range(num_criteria) %}
+          <th>{{ criteria_names[i] }}</th> <!-- Hiển thị tên tiêu chí từ session -->
+          {% endfor %}
+        </tr>
+        {% for i in range(num_criteria) %}
+        <tr>
+          <th>{{ criteria_names[i] }}</th> <!-- Hiển thị tên tiêu chí từ session -->
+          {% for j in range(num_criteria) %}
+          <td>
+            {% if i == j %}
+            <input type="text" value="1" readonly>
+            {% elif i < j %}
+            <select name="criteria_{{ i }}_{{ j }}" required>
+              <option value="" disabled selected>Chọn</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
+              <option value="9">9</option>
+              <option value="1/2">1/2</option>
+              <option value="1/3">1/3</option>
+              <option value="1/4">1/4</option>
+              <option value="1/5">1/5</option>
+              <option value="1/6">1/6</option>
+              <option value="1/7">1/7</option>
+              <option value="1/8">1/8</option>
+              <option value="1/9">1/9</option>
+            </select>
+            {% else %}
+            <input type="text" value="auto" readonly>
+            {% endif %}
+          </td>
+          {% endfor %}
+        </tr>
+        {% endfor %}
+      </table>
+      <div class="button-group">
+        <button type="submit">Tiếp tục</button>
+        <a href="/step2" class="button">Quay lại</a>
+        <a href="/history" class="button">Lịch sử</a>
+      </div>
+    </form>
+  </div>
+</body>
+</html>

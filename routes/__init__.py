@@ -1,0 +1,1 @@
+# Tệp này khai báo thư mục "routes" là một module Python.

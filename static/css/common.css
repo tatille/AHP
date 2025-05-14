@@ -1,0 +1,174 @@
+/* Reset styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Body styles */
+body {
+  font-family: 'Segoe UI', sans-serif;
+  display: flex;
+  height: 100vh; /* Chiều cao toàn màn hình */
+  background-color: #fffde7;
+  color: #333;
+  font-size: 20px; /* tăng cỡ chữ mặc định */
+  line-height: 1.7;
+  overflow: hidden; /* Ẩn cuộn chuột */
+}
+
+/* Sidebar styles */
+.sidebar {
+  width: 260px;
+  background-color: #0D706E;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+  overflow-y: auto; /* Cuộn riêng cho sidebar nếu cần */
+}
+
+.sidebar h1 {
+  font-size: 2rem;
+  color: #fff;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.sidebar a {
+  text-decoration: none;
+  color: #fff;
+  padding: 0.6rem 1rem;
+  border-radius: 6px;
+  transition: background 0.2s;
+  background-color: #0D706E; /* Butterfly Green */
+  font-weight: 500;
+  font-size: 1.15rem;
+}
+
+.sidebar a:hover,
+.sidebar a.active {
+  background-color: #0A5A59; /* Đậm hơn Butterfly Green */
+  color: white;
+}
+
+/* Main content styles */
+.main-content {
+  flex: 1;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Căn đều nội dung */
+  overflow: hidden; /* Ẩn cuộn */
+}
+
+h1 {
+  font-size: 2.8rem;
+}
+
+h2 {
+  font-size: 2.2rem;
+  color: #0D706E; /* Butterfly Green */
+  margin-bottom: 1.5rem;
+}
+
+h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+p, label, th, td, input, select, button, .button {
+  font-size: 1.15rem;
+}
+
+/* Form styles */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  flex: 1;
+  overflow-y: auto; /* Cuộn riêng cho form nếu cần */
+}
+
+/* Table styles */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 1.1rem;
+}
+
+td, th {
+  padding: 8px;
+  text-align: center;
+}
+
+/* Button styles */
+button, .button, .btn {
+  background-color: #0D706E; /* Butterfly Green */
+  color: white;
+  padding: 16px 32px;
+  font-size: 1.15rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+  display: inline-block;
+  text-align: center;
+  margin-right: 10px;
+  margin-top: 10px;
+}
+
+button:hover, .button:hover {
+  background-color: #0A5A59; /* Đậm hơn Butterfly Green */
+}
+
+/* Input styles */
+input[type="number"], input[type="text"], select {
+  width: 100%;
+  padding: 18px 14px;
+  font-size: 1.15rem;
+  border: 1px solid #0D706E; /* Butterfly Green */
+  border-radius: 10px;
+  margin-bottom: 20px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+input[type="number"]:focus, input[type="text"]:focus, select:focus {
+  border-color: #0A5A59; /* Đậm hơn Butterfly Green */
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(13, 112, 110, 0.3);
+}
+
+input[readonly] {
+  background-color: #f0f0f0;
+  border: none;
+}
+
+/* Button group styles */
+.button-group {
+  display: flex;
+  justify-content: center; /* Căn giữa các nút */
+  gap: 1rem; /* Tăng khoảng cách giữa các nút */
+  margin-top: 1rem;
+}
+
+@media (max-width: 600px) {
+  .main-content {
+    padding: 1.5rem;
+  }
+
+  form {
+    padding: 20px;
+  }
+
+  h2 {
+    font-size: 22px;
+  }
+
+  p {
+    font-size: 15px;
+  }
+}

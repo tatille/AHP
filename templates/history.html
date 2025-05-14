@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Lịch sử AHP</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="sidebar">
+    <h1>AHP App</h1>
+    <a href="/" class="{% if request.path == '/' %}active{% endif %}">Bước 1: Số lượng</a>
+    <a href="/step2" class="{% if request.path == '/step2' %}active{% endif %}">Bước 2: Nhập tên</a>
+    <a href="/step3" class="{% if request.path == '/step3' %}active{% endif %}">Bước 3: Ma trận</a>
+    <a href="/step4" class="{% if request.path == '/step4' %}active{% endif %}">Bước 4: Ma trận</a>
+    <a href="/result" class="{% if request.path == '/result' %}active{% endif %}">Kết quả</a>
+    <a href="/history" class="{% if request.path == '/history' %}active{% endif %}">Lịch sử</a>
+  </div>
+
+  <div class="main-content">
+    <h2>Lịch sử tính AHP</h2>
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Thời gian</th>
+          <th>CR</th>
+          <th>Tiêu chí</th>
+          <th>Phương án</th>
+          <th>Xếp hạng</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for record in records %}
+        <tr>
+          <td>{{ record.timestamp }}</td>
+          <td>{{ record.CR }}</td>
+          <td>{{ ", ".join(record.criteria_names) }}</td>
+          <td>{{ ", ".join(record.alternatives) }}</td>
+          <td>
+            {% for alternative, score in record.ranked_alternatives %}
+            <div>{{ alternative }}: {{ score }}</div>
+            {% endfor %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <div class="buttons">
+      <a href="/">← Quay lại trang chính</a>
+      <a href="/export_history" class="btn btn-success">Xuất lịch sử ra Excel</a>
+      <form action="/clear_history" method="post" style="display:inline;">
+        <button type="submit" class="btn btn-danger" onclick="return confirm('Bạn có chắc chắn muốn xóa toàn bộ lịch sử?');">Xóa toàn bộ lịch sử</button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

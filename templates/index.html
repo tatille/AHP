@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nhập ma trận AHP</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <h2 class="mt-5">Nhập ma trận so sánh cặp tiêu chí (AHP)</h2>
+
+    <!-- Hiển thị thông báo lỗi nếu có -->
+    {% if error %}
+    <div class="alert alert-danger" role="alert">
+      {{ error }}
+    </div>
+    {% endif %}
+
+    <form method="post" class="mt-4">
+      <h3>Chọn số lượng tiêu chí và phương án</h3>
+      <div class="mb-3">
+        <label for="num_criteria" class="form-label">Số lượng tiêu chí:</label>
+        <input type="number" id="num_criteria" name="num_criteria" min="2" max="10" value="5" required class="form-control">
+      </div>
+      <div class="mb-3">
+        <label for="num_alternatives" class="form-label">Số lượng phương án:</label>
+        <input type="number" id="num_alternatives" name="num_alternatives" min="2" max="10" value="4" required class="form-control">
+      </div>
+
+      <h3>Nhập tên tiêu chí</h3>
+      <div id="criteria_names" class="mb-3">
+        {% for i in range(5) %}
+        <input type="text" name="criteria_name_{{ i }}" placeholder="Tên tiêu chí {{ i+1 }}" required class="form-control">
+        <br>
+        {% endfor %}
+      </div>
+
+      <h3>Nhập tên phương án</h3>
+      <div id="alternative_names" class="mb-3">
+        {% for i in range(4) %}
+        <input type="text" name="alternative_name_{{ i }}" placeholder="Tên phương án {{ i+1 }}" required class="form-control">
+        <br>
+        {% endfor %}
+      </div>
+
+      <h3>Ma trận tiêu chí</h3>
+      <table class="table">
+        <tr>
+          <th></th>
+          {% for i in range(5) %}
+          <th>Tiêu chí {{ i+1 }}</th>
+          {% endfor %}
+        </tr>
+        {% for i in range(5) %}
+        <tr>
+          <th>Tiêu chí {{ i+1 }}</th>
+          {% for j in range(5) %}
+          <td>
+            {% if i == j %}
+            <input type="text" value="1" readonly name="criteria_{{i}}_{{j}}" class="form-control-plaintext">
+            {% elif i < j %}
+            <select name="criteria_{{i}}_{{j}}" class="form-select">
+              <option value="1">1</option>
+              <option value="3">3</option>
+              <option value="5">5</option>
+              <option value="7">7</option>
+              <option value="9">9</option>
+            </select>
+            {% else %}
+            <input type="text" value="auto" readonly style="background: #eee;" class="form-control-plaintext">
+            {% endif %}
+          </td>
+          {% endfor %}
+        </tr>
+        {% endfor %}
+      </table>
+
+      <h3>Ma trận so sánh cặp các phương án theo từng tiêu chí</h3>
+      {% for i in range(5) %}
+      <h4>Tiêu chí {{ i+1 }}</h4>
+      <table class="table">
+        <tr>
+          <th></th>
+          {% for j in range(4) %}
+          <th>Phương án {{ j+1 }}</th>
+          {% endfor %}
+        </tr>
+        {% for j in range(4) %}
+        <tr>
+          <th>Phương án {{ j+1 }}</th>
+          {% for k in range(4) %}
+          <td>
+            {% if j == k %}
+            <input type="text" value="1" readonly name="alternative_{{i}}_{{j}}_{{k}}" class="form-control-plaintext">
+            {% elif j < k %}
+            <input type="text" name="alternative_{{i}}_{{j}}_{{k}}" placeholder="Nhập giá trị (vd: 1/9, 1/5)" class="form-control">
+            {% else %}
+            <input type="text" value="auto" readonly style="background: #eee;" class="form-control-plaintext">
+            {% endif %}
+          </td>
+          {% endfor %}
+        </tr>
+        {% endfor %}
+      </table>
+      {% endfor %}
+
+      <br>
+      <button type="submit" class="btn btn-primary">Tính AHP</button> | <a href="/history" class="btn btn-link">Xem lịch sử</a>
+    </form>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

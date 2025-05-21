@@ -41,3 +41,37 @@ def calculate_weights(matrix):
         return weights, CR
     except Exception as e:
         raise ValueError(f"Lỗi khi tính toán trọng số: {e}")
+
+def calculate_details(matrix):
+    try:
+        matrix = np.array(matrix, dtype=float)
+        if matrix.shape[0] != matrix.shape[1]:
+            raise ValueError("Ma trận phải là ma trận vuông.")
+        if not np.all(np.isfinite(matrix)):
+            raise ValueError("Ma trận chứa giá trị không hợp lệ (NaN hoặc Infinity).")
+        if not np.allclose(matrix, 1 / matrix.T, atol=1e-8):
+            raise ValueError("Ma trận không đối xứng hợp lệ.")
+        col_sum = matrix.sum(axis=0)
+        normalized_matrix = matrix / col_sum
+        weights = normalized_matrix.mean(axis=1)
+        weighted_sum = np.dot(matrix, weights)
+        consistency_vector = weighted_sum / weights
+        lam_max = np.mean(consistency_vector)
+        CI = (lam_max - len(weights)) / (len(weights) - 1)
+        RI = RI_TABLE.get(len(weights), None)
+        if RI is None:
+            raise ValueError(f"Không hỗ trợ ma trận kích thước {len(weights)}.")
+        CR = CI / RI if RI else 0
+        return {
+            'matrix': matrix,
+            'col_sum': col_sum,
+            'normalized_matrix': normalized_matrix,
+            'weights': weights,
+            'weighted_sum': weighted_sum,
+            'consistency_vector': consistency_vector,
+            'lam_max': lam_max,
+            'CI': CI,
+            'CR': CR
+        }
+    except Exception as e:
+        raise ValueError(f"Lỗi khi tính toán chi tiết: {e}")

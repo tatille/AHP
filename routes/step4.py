@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session
 from fractions import Fraction
 import numpy as np
+from ahp_utils import calculate_weights
 
 step4_bp = Blueprint("step4", __name__)
 
@@ -38,6 +39,21 @@ def step4():
 
             session["alternative_matrices"] = alternative_matrices
 
+            # Kiểm tra hợp lệ từng ma trận phương án (CR <= 0.1)
+            cr_list = []
+            for i, matrix in enumerate(alternative_matrices):
+                try:
+                    weights, CR = calculate_weights(matrix)
+                    cr_list.append(CR)
+                    if CR > 0.1:
+                        errors.append(f"Ma trận phương án cho tiêu chí '{session['criteria_names'][i]}' có chỉ số nhất quán CR = {CR:.4f} vượt ngưỡng cho phép (0.1). Vui lòng điều chỉnh lại.")
+                except Exception as e:
+                    cr_list.append(None)
+                    errors.append(f"Lỗi tính toán ma trận phương án cho tiêu chí '{session['criteria_names'][i]}': {e}")
+
+            # Lưu lại CR cho từng ma trận để hiển thị lại trên giao diện
+            session['alternative_cr_list'] = cr_list
+
             if errors:
                 return render_template(
                     "step4.html",
@@ -47,6 +63,7 @@ def step4():
                     criteria_names=session["criteria_names"],
                     alternatives=session["alternatives"],
                     alternative_matrices=alternative_matrices,
+                    alternative_cr_list=cr_list,
                     enumerate=enumerate
                 )
 
@@ -79,5 +96,6 @@ def step4():
         criteria_names=session["criteria_names"],
         alternatives=session["alternatives"],
         alternative_matrices=session["alternative_matrices"],
+        alternative_cr_list=session.get('alternative_cr_list', []),
         enumerate=enumerate
     )

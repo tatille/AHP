@@ -22,8 +22,14 @@
   <div class="main-content">
     <h2>Bước 4: Nhập ma trận so sánh cặp các phương án</h2>
     <form method="post">
-      {% for criterion in criteria_names %}
-      <h3>Tiêu chí: {{ criterion }}</h3>
+      {% for i in range(criteria_names|length) %}
+      <h3>Tiêu chí: {{ criteria_names[i] }}
+        {% if alternative_cr_list and alternative_cr_list[i] is not none %}
+          <span style="font-size:0.95em; font-weight:normal;">
+            (CR: <span class="{% if alternative_cr_list[i] > 0.1 %}text-danger{% else %}text-success{% endif %}" style="font-weight:bold;">{{ '%.4f'|format(alternative_cr_list[i]) }}</span>{% if alternative_cr_list[i] > 0.1 %} - Chưa hợp lệ!{% else %} - Hợp lệ. Bạn có thể chuyển sang tiêu chí tiếp theo hoặc hoàn tất.{% endif %})
+          </span>
+        {% endif %}
+      </h3>
       <table>
         <tr>
           <th></th>

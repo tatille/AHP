@@ -19,7 +19,7 @@
     <a href="/history" class="{% if request.path == '/history' %}active{% endif %}">Xem lịch sử</a>
   </div>
 
-  <div class="main-content">
+  <div class="main-content" style="max-height:90vh; overflow-y:auto; padding-bottom:32px;">
     <h2>Kết quả AHP</h2>
 
     {% if error %}
@@ -46,6 +46,112 @@
           {% endfor %}
         </tbody>
       </table>
+
+      <!-- Bảng chi tiết tính toán ma trận tiêu chí -->
+      <div class="card mb-4">
+        <div class="card-header bg-info text-white" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#collapseDetails" aria-expanded="false" aria-controls="collapseDetails">
+          <b>Chi tiết tính toán ma trận tiêu chí <span style="font-size:0.9em;">(bấm để xem/ẩn)</span></b>
+        </div>
+        <div class="collapse" id="collapseDetails">
+          <div class="card-body" style="background:#f8f9fa;">
+            <div class="table-responsive mb-3" style="box-shadow:0 2px 8px #ccc; border-radius:8px; padding:10px;">
+              <b>Ma trận tiêu chí:</b>
+              <table class="table table-bordered table-sm mb-2">
+                <thead>
+                  <tr>
+                    <th></th>
+                    {% for name in result.criteria_names %}<th>{{ name }}</th>{% endfor %}
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for i in range(result.criteria_details.matrix|length) %}
+                  <tr>
+                    <th>{{ result.criteria_names[i] }}</th>
+                    {% for v in result.criteria_details.matrix[i] %}<td>{{ '%.4f'|format(v) }}</td>{% endfor %}
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+            <div class="table-responsive mb-3" style="box-shadow:0 2px 8px #ccc; border-radius:8px; padding:10px;">
+              <b>Tổng cột:</b>
+              <table class="table table-bordered table-sm mb-2">
+                <tr>
+                  <th></th>
+                  {% for name in result.criteria_names %}<th>{{ name }}</th>{% endfor %}
+                </tr>
+                <tr>
+                  <th>Tổng</th>
+                  {% for v in result.criteria_details.col_sum %}<td>{{ '%.4f'|format(v) }}</td>{% endfor %}
+                </tr>
+              </table>
+            </div>
+            <div class="table-responsive mb-3" style="box-shadow:0 2px 8px #ccc; border-radius:8px; padding:10px;">
+              <b>Ma trận chuẩn hóa:</b>
+              <table class="table table-bordered table-sm mb-2">
+                <thead>
+                  <tr>
+                    <th></th>
+                    {% for name in result.criteria_names %}<th>{{ name }}</th>{% endfor %}
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for i in range(result.criteria_details.normalized_matrix|length) %}
+                  <tr>
+                    <th>{{ result.criteria_names[i] }}</th>
+                    {% for v in result.criteria_details.normalized_matrix[i] %}<td>{{ '%.4f'|format(v) }}</td>{% endfor %}
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+            <div class="table-responsive mb-3" style="box-shadow:0 2px 8px #ccc; border-radius:8px; padding:10px;">
+              <b>Trọng số (Criteria Weights):</b>
+              <table class="table table-bordered table-sm mb-2">
+                <tr>
+                  <th></th>
+                  {% for name in result.criteria_names %}<th>{{ name }}</th>{% endfor %}
+                </tr>
+                <tr>
+                  <th>Trọng số</th>
+                  {% for i in range(result.criteria_details.weights|length) %}<td>{{ '%.4f'|format(result.criteria_details.weights[i]) }}</td>{% endfor %}
+                </tr>
+              </table>
+            </div>
+            <div class="table-responsive mb-3" style="box-shadow:0 2px 8px #ccc; border-radius:8px; padding:10px;">
+              <b>Weighted Sum:</b>
+              <table class="table table-bordered table-sm mb-2">
+                <tr>
+                  <th></th>
+                  {% for name in result.criteria_names %}<th>{{ name }}</th>{% endfor %}
+                </tr>
+                <tr>
+                  <th>Weighted Sum</th>
+                  {% for i in range(result.criteria_details.weighted_sum|length) %}<td>{{ '%.4f'|format(result.criteria_details.weighted_sum[i]) }}</td>{% endfor %}
+                </tr>
+              </table>
+            </div>
+            <div class="table-responsive mb-3" style="box-shadow:0 2px 8px #ccc; border-radius:8px; padding:10px;">
+              <b>Consistency Vector:</b>
+              <table class="table table-bordered table-sm mb-2">
+                <tr>
+                  <th></th>
+                  {% for name in result.criteria_names %}<th>{{ name }}</th>{% endfor %}
+                </tr>
+                <tr>
+                  <th>Consistency Vector</th>
+                  {% for i in range(result.criteria_details.consistency_vector|length) %}<td>{{ '%.4f'|format(result.criteria_details.consistency_vector[i]) }}</td>{% endfor %}
+                </tr>
+              </table>
+            </div>
+            <div class="mb-3" style="font-size:1.1em;">
+              <b>Lamda<sub>max</sub>:</b> {{ '%.4f'|format(result.criteria_details.lam_max) }}<br>
+              <b>Chỉ số nhất quán CI:</b> {{ '%.4f'|format(result.criteria_details.CI) }}<br>
+              <b>Chỉ số nhất quán CR:</b> {{ '%.4f'|format(result.criteria_details.CR) }}
+            </div>
+          </div>
+        </div>
+      </div>
 
       <h3>Xếp hạng phương án:</h3>
       <div style="max-width: 500px; margin: 0 auto 2rem auto;">
@@ -93,6 +199,114 @@
           });
         });
       </script>
+
+      <!-- Chi tiết từng ma trận phương án (bước 4) -->
+      {% for alt in result.alternatives_details %}
+      <div class="card mb-4">
+        <div class="card-header bg-warning text-dark" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#collapseAlt{{ loop.index }}" aria-expanded="false" aria-controls="collapseAlt{{ loop.index }}">
+          <b>Chi tiết ma trận phương án cho tiêu chí: {{ alt.name }} <span style="font-size:0.9em;">(bấm để xem/ẩn)</span></b>
+        </div>
+        <div class="collapse" id="collapseAlt{{ loop.index }}">
+          <div class="card-body" style="background:#f8f9fa;">
+            <div class="table-responsive mb-3" style="box-shadow:0 2px 8px #ccc; border-radius:8px; padding:10px;">
+              <b>Ma trận phương án:</b>
+              <table class="table table-bordered table-sm mb-2">
+                <thead>
+                  <tr>
+                    <th></th>
+                    {% for name in alt.alternatives %}<th>{{ name }}</th>{% endfor %}
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for i in range(alt.details.matrix|length) %}
+                  <tr>
+                    <th>{{ alt.alternatives[i] }}</th>
+                    {% for v in alt.details.matrix[i] %}<td>{{ '%.4f'|format(v) }}</td>{% endfor %}
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+            <div class="table-responsive mb-3" style="box-shadow:0 2px 8px #ccc; border-radius:8px; padding:10px;">
+              <b>Tổng cột:</b>
+              <table class="table table-bordered table-sm mb-2">
+                <tr>
+                  <th></th>
+                  {% for name in alt.alternatives %}<th>{{ name }}</th>{% endfor %}
+                </tr>
+                <tr>
+                  <th>Tổng</th>
+                  {% for v in alt.details.col_sum %}<td>{{ '%.4f'|format(v) }}</td>{% endfor %}
+                </tr>
+              </table>
+            </div>
+            <div class="table-responsive mb-3" style="box-shadow:0 2px 8px #ccc; border-radius:8px; padding:10px;">
+              <b>Ma trận chuẩn hóa:</b>
+              <table class="table table-bordered table-sm mb-2">
+                <thead>
+                  <tr>
+                    <th></th>
+                    {% for name in alt.alternatives %}<th>{{ name }}</th>{% endfor %}
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for i in range(alt.details.normalized_matrix|length) %}
+                  <tr>
+                    <th>{{ alt.alternatives[i] }}</th>
+                    {% for v in alt.details.normalized_matrix[i] %}<td>{{ '%.4f'|format(v) }}</td>{% endfor %}
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+            <div class="table-responsive mb-3" style="box-shadow:0 2px 8px #ccc; border-radius:8px; padding:10px;">
+              <b>Trọng số (Alternative Weights):</b>
+              <table class="table table-bordered table-sm mb-2">
+                <tr>
+                  <th></th>
+                  {% for name in alt.alternatives %}<th>{{ name }}</th>{% endfor %}
+                </tr>
+                <tr>
+                  <th>Trọng số</th>
+                  {% for i in range(alt.details.weights|length) %}<td>{{ '%.4f'|format(alt.details.weights[i]) }}</td>{% endfor %}
+                </tr>
+              </table>
+            </div>
+            <div class="table-responsive mb-3" style="box-shadow:0 2px 8px #ccc; border-radius:8px; padding:10px;">
+              <b>Weighted Sum:</b>
+              <table class="table table-bordered table-sm mb-2">
+                <tr>
+                  <th></th>
+                  {% for name in alt.alternatives %}<th>{{ name }}</th>{% endfor %}
+                </tr>
+                <tr>
+                  <th>Weighted Sum</th>
+                  {% for i in range(alt.details.weighted_sum|length) %}<td>{{ '%.4f'|format(alt.details.weighted_sum[i]) }}</td>{% endfor %}
+                </tr>
+              </table>
+            </div>
+            <div class="table-responsive mb-3" style="box-shadow:0 2px 8px #ccc; border-radius:8px; padding:10px;">
+              <b>Consistency Vector:</b>
+              <table class="table table-bordered table-sm mb-2">
+                <tr>
+                  <th></th>
+                  {% for name in alt.alternatives %}<th>{{ name }}</th>{% endfor %}
+                </tr>
+                <tr>
+                  <th>Consistency Vector</th>
+                  {% for i in range(alt.details.consistency_vector|length) %}<td>{{ '%.4f'|format(alt.details.consistency_vector[i]) }}</td>{% endfor %}
+                </tr>
+              </table>
+            </div>
+            <div class="mb-3" style="font-size:1.1em;">
+              <b>Lamda<sub>max</sub>:</b> {{ '%.4f'|format(alt.details.lam_max) }}<br>
+              <b>Chỉ số nhất quán CI:</b> {{ '%.4f'|format(alt.details.CI) }}<br>
+              <b>Chỉ số nhất quán CR:</b> {{ '%.4f'|format(alt.details.CR) }}
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
     {% endif %}
 
     <div class="buttons">
@@ -101,5 +315,7 @@
       <a href="/export_excel" class="btn btn-success">Xuất kết quả ra Excel</a>
     </div>
   </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

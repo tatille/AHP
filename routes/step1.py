@@ -15,10 +15,10 @@ def step1():
             try:
                 num_criteria = int(request.form["num_criteria"])
                 num_alternatives = int(request.form["num_alternatives"])
-                if num_criteria < 1 or num_alternatives < 1:
-                    raise ValueError("Số lượng tiêu chí và phương án phải lớn hơn 0.")
-                if num_criteria > 15 or num_alternatives > 15:
-                    return render_template("step1.html", error="Số lượng tiêu chí và phương án không được vượt quá 15.")
+                if num_criteria < 3 or num_alternatives < 3:
+                    return render_template("step1.html", error="Số lượng tiêu chí và phương án tối thiểu là 3.")
+                if num_criteria > 10 or num_alternatives > 10:
+                    return render_template("step1.html", error="Số lượng tiêu chí và phương án tối đa là 10.")
             except ValueError as e:
                 return render_template("step1.html", error=str(e))
 
@@ -73,8 +73,14 @@ def upload_excel():
 
     try:
         data = pd.read_excel(filepath)
-        session["num_criteria"] = len(data.columns) - 1
-        session["num_alternatives"] = len(data)
+        num_criteria = len(data.columns) - 1
+        num_alternatives = len(data)
+        if num_criteria < 3 or num_alternatives < 3:
+            return render_template("step1.html", error="Số lượng tiêu chí và phương án tối thiểu là 3.")
+        if num_criteria > 10 or num_alternatives > 10:
+            return render_template("step1.html", error="Số lượng tiêu chí và phương án tối đa là 10.")
+        session["num_criteria"] = num_criteria
+        session["num_alternatives"] = num_alternatives
         session["criteria_names"] = data.columns[1:].tolist()
         session["alternatives"] = data.iloc[:, 0].tolist()
         session["criteria_matrix"] = data.iloc[:, 1:].values.tolist()

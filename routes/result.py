@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, session, redirect, url_for, send_file, make_response, render_template_string
 import numpy as np
 import pandas as pd
-from ahp_utils import calculate_weights
+from ahp_utils import calculate_weights, calculate_details
 from fractions import Fraction
 from datetime import datetime
 from db_utils import get_db
@@ -46,21 +46,31 @@ def result():
             for matrix in alternative_matrices
         ]
 
+        # Tính toán chi tiết cho ma trận tiêu chí
+        criteria_details = calculate_details(criteria_matrix)
         # Tính toán trọng số và xếp hạng
-        weights, CR = calculate_weights(np.array(criteria_matrix))
+        weights, CR = criteria_details['weights'], criteria_details['CR']
         alternative_weights = {
             session["criteria_names"][i]: calculate_weights(np.array(matrix))[0]
             for i, matrix in enumerate(alternative_matrices)
         }
-
         alternative_weights_matrix = np.array(list(alternative_weights.values())).T
         overall_scores = np.dot(weights, alternative_weights_matrix)
-
         ranked_alternatives = [
             (session["alternatives"][i], score)
             for i, score in enumerate(overall_scores)
         ]
         ranked_alternatives.sort(key=lambda x: x[1], reverse=True)
+
+        # Tính toán chi tiết cho từng ma trận phương án
+        alternatives_details = []
+        for i, matrix in enumerate(alternative_matrices):
+            details = calculate_details(matrix)
+            alternatives_details.append({
+                'name': session['criteria_names'][i],
+                'details': details,
+                'alternatives': session['alternatives']
+            })
 
         # Lưu lại vào session để các route export dùng được
         session["criteria_weights"] = weights.tolist()
@@ -72,6 +82,10 @@ def result():
             "weights": {session["criteria_names"][i]: weights[i] for i in range(len(weights))},
             "alternative_weights": alternative_weights,
             "ranked_alternatives": ranked_alternatives,
+            "criteria_details": criteria_details,
+            "criteria_names": session["criteria_names"],
+            "alternatives": session["alternatives"],
+            "alternatives_details": alternatives_details
         }
 
         # Lưu lịch sử vào MongoDB

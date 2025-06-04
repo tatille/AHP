@@ -22,35 +22,114 @@
     <h2>Bước 1: Nhập số lượng tiêu chí và phương án</h2>
     <p>Chọn từ 3 đến 10 tiêu chí và phương án để đảm bảo tính ổn định trong tính toán AHP.</p>
 
-    <form method="post" action="/" enctype="multipart/form-data">
-      <h2>Chọn phương thức nhập dữ liệu</h2>
-      <div>
-        <input type="radio" id="manual" name="input_method" value="manual" checked>
-        <label for="manual">Nhập tay</label>
-      </div>
-      <div>
-        <input type="radio" id="excel" name="input_method" value="excel">
-        <label for="excel">Tải lên file Excel</label>
+    {% if error %}
+    <div class="alert alert-danger" role="alert">
+      {{ error }}
+    </div>
+    {% endif %}
+
+    <form method="post" action="/" enctype="multipart/form-data" id="inputForm">
+      <div class="card mb-4">
+        <div class="card-body">
+          <h3 class="card-title">Chọn phương thức nhập dữ liệu</h3>
+          <div class="form-check mb-3">
+            <input class="form-check-input" type="radio" id="manual" name="input_method" value="manual" checked>
+            <label class="form-check-label" for="manual">Nhập tay</label>
+          </div>
+          <div class="form-check mb-3">
+            <input class="form-check-input" type="radio" id="excel" name="input_method" value="excel">
+            <label class="form-check-label" for="excel">Tải lên file Excel</label>
+          </div>
+        </div>
       </div>
 
-      <div id="manual-input">
-        <label for="num_criteria">Số lượng tiêu chí:</label>
-        <input type="number" id="num_criteria" name="num_criteria" min="3" max="10" required class="form-control">
-
-        <label for="num_alternatives">Số lượng phương án:</label>
-        <input type="number" id="num_alternatives" name="num_alternatives" min="3" max="10" required class="form-control">
+      <div id="manual-input" class="card mb-4">
+        <div class="card-body">
+          <h3 class="card-title">Nhập thông tin</h3>
+          <div class="mb-3">
+            <label for="num_criteria" class="form-label">Số lượng tiêu chí:</label>
+            <input type="number" id="num_criteria" name="num_criteria" min="3" max="10" required class="form-control">
+          </div>
+          <div class="mb-3">
+            <label for="num_alternatives" class="form-label">Số lượng phương án:</label>
+            <input type="number" id="num_alternatives" name="num_alternatives" min="3" max="10" required class="form-control">
+          </div>
+        </div>
       </div>
 
-      <div id="excel-input" style="display: none;">
-        <label for="file">Tải lên file Excel:</label>
-        <input type="file" id="file" name="file" accept=".xlsx" class="form-control">
+      <div id="excel-input" class="card mb-4" style="display: none;">
+        <div class="card-body">
+          <h3 class="card-title">Tải lên file Excel</h3>
+          <div class="mb-3">
+            <label for="file" class="form-label">Chọn file Excel:</label>
+            <input type="file" id="file" name="file" accept=".xlsx,.xls" class="form-control">
+          </div>
+          <div class="mb-3">
+            <a href="{{ url_for('step1.download_template') }}" class="btn btn-secondary">
+              <i class="bi bi-download"></i> Tải template mẫu
+            </a>
+          </div>
+          <div class="alert alert-info">
+            <h5>Hướng dẫn sử dụng file Excel:</h5>
+            <ol>
+              <li>Tải template mẫu bằng nút bên trên</li>
+              <li>Điền thông tin vào các sheet theo hướng dẫn</li>
+              <li>Tải lên file đã điền</li>
+            </ol>
+          </div>
+        </div>
       </div>
 
       <div class="button-group">
-        <button type="submit" class="button">Tiếp tục</button>
-        <a href="/history" class="button">Lịch sử</a>
+        <button type="submit" class="btn btn-primary">Tiếp tục</button>
+        <a href="/history" class="btn btn-secondary">Xem lịch sử</a>
       </div>
     </form>
   </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const manualInput = document.getElementById('manual-input');
+      const excelInput = document.getElementById('excel-input');
+      const manualRadio = document.getElementById('manual');
+      const excelRadio = document.getElementById('excel');
+      const form = document.getElementById('inputForm');
+
+      function updateInputDisplay() {
+        if (manualRadio.checked) {
+          manualInput.style.display = 'block';
+          excelInput.style.display = 'none';
+          // Disable excel input fields
+          excelInput.querySelectorAll('input').forEach(input => input.disabled = true);
+          // Enable manual input fields
+          manualInput.querySelectorAll('input').forEach(input => input.disabled = false);
+        } else {
+          manualInput.style.display = 'none';
+          excelInput.style.display = 'block';
+           // Enable excel input fields
+          excelInput.querySelectorAll('input').forEach(input => input.disabled = false);
+          // Disable manual input fields
+          manualInput.querySelectorAll('input').forEach(input => input.disabled = true);
+        }
+      }
+
+      // Initial display setup
+      updateInputDisplay();
+
+      manualRadio.addEventListener('change', updateInputDisplay);
+      excelRadio.addEventListener('change', updateInputDisplay);
+
+      form.addEventListener('submit', function(event) {
+        if (excelRadio.checked) {
+          const fileInput = document.getElementById('file');
+          if (fileInput.files.length === 0) {
+            alert('Vui lòng chọn file Excel để tải lên.');
+            event.preventDefault(); // Prevent form submission
+          }
+        }
+        // Manual input validation is handled by HTML5 'required' attribute
+      });
+    });
+  </script>
 </body>
 </html>

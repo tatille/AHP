@@ -64,10 +64,10 @@
                   </tr>
                 </thead>
                 <tbody>
-                  {% for i in range(result.criteria_details.matrix|length) %}
+                  {% for i in range(result.criteria_details.matrix_fraction_str|length) %}
                   <tr>
                     <th>{{ result.criteria_names[i] }}</th>
-                    {% for v in result.criteria_details.matrix[i] %}<td>{{ '%.4f'|format(v) }}</td>{% endfor %}
+                    {% for v in result.criteria_details.matrix_fraction_str[i] %}<td>{{ v }}</td>{% endfor %}
                   </tr>
                   {% endfor %}
                 </tbody>
@@ -175,8 +175,8 @@
       </table>
       <script>
         document.addEventListener('DOMContentLoaded', function() {
-          const pieLabels = {{ result.ranked_alternatives | map(attribute=0) | list | tojson }};
-          const pieData = {{ result.ranked_alternatives | map(attribute=1) | list | tojson }};
+          const pieLabels = JSON.parse('{{ result.ranked_alternatives | map(attribute=0) | list | tojson | safe }}');
+          const pieData = JSON.parse('{{ result.ranked_alternatives | map(attribute=1) | list | tojson | safe }}');
           const pieColors = [
             '#0D706E', '#F9A825', '#43A047', '#E53935', '#3949AB', '#8E24AA', '#00838F', '#F4511E', '#6D4C41', '#757575'
           ];
@@ -218,10 +218,10 @@
                   </tr>
                 </thead>
                 <tbody>
-                  {% for i in range(alt.details.matrix|length) %}
+                  {% for i in range(alt.details.matrix_fraction_str|length) %}
                   <tr>
                     <th>{{ alt.alternatives[i] }}</th>
-                    {% for v in alt.details.matrix[i] %}<td>{{ '%.4f'|format(v) }}</td>{% endfor %}
+                    {% for v in alt.details.matrix_fraction_str[i] %}<td>{{ v }}</td>{% endfor %}
                   </tr>
                   {% endfor %}
                 </tbody>
@@ -312,7 +312,8 @@
     <div class="buttons">
       <a href="/">← Quay lại trang chính</a>
       <a href="/history">Xem lịch sử</a>
-      <a href="/export_excel" class="btn btn-success">Xuất kết quả ra Excel</a>
+      <a href="{{ url_for('result.export_pdf') }}" class="btn btn-primary">Xuất kết quả ra PDF</a>
+      <a href="{{ url_for('result.export_excel') }}" class="btn btn-success">Xuất kết quả ra Excel</a>
     </div>
   </div>
 

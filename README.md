@@ -92,4 +92,4 @@ python app.py
 
 ## Liên hệ
 
-Nếu có bất kỳ câu hỏi hoặc góp ý nào, vui lòng liên hệ [Tên/Địa chỉ liên hệ của bạn]. 
+Nếu có bất kỳ câu hỏi hoặc góp ý nào, vui lòng liên hệ [Nhan Văn Ánh 1050080169 /10DH_CNPM3 ]. 

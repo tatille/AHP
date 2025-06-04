@@ -18,12 +18,10 @@ Thực hiện các bước sau để clone repository và cài đặt các thư 
 1.  **Clone Repository:**
 
     ```bash
-    git clone <địa chỉ repository của bạn>
+    git clone https://github.com/tatille/AHP.git
     cd <tên thư mục dự án>
     ```
 
-    *(Thay `<địa chỉ repository của bạn>` bằng URL repository của bạn)*
-    *(Thay `<tên thư mục dự án>` bằng tên thư mục bạn clone về)*
 
 2.  **Tạo và kích hoạt môi trường ảo (Tuỳ chọn nhưng khuyến khích):**
 
